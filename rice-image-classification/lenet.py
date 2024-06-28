@@ -12,8 +12,10 @@ class LeNet(nn.Module):
         """
         LeNet model for image classification. Architecture proposed by Yann LeCun in 1998.
 
-        :param num_channels: 1 for gray-scale images, 3 for RGB images
-        :param num_classes: the total number of classes in the dataset
+        :param num_channels: 1 for gray-scale images, 3 for RGB images.
+        :param image_width: image width in pixels.
+        :param image_height: image height in pixels.
+        :param num_classes: the total number of classes in the dataset.
         """
         super(LeNet, self).__init__()
 

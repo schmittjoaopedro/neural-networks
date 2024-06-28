@@ -1,27 +1,33 @@
+import os.path
+
 import torch
 import torchvision.transforms as T
-from datasets import load_dataset
+from datasets import load_dataset, load_from_disk
 
 from lenet import LeNet
 
 # ========================================
 # DATASET PROCESSING
 # ========================================
-dataset = load_dataset("nateraw/rice-image-dataset")['train']
+if not os.path.exists("datasets/rice.hf"):
+    def convert_image(record):
+        record['image'] = T.ToTensor()(record['image'].resize((100, 100)))
+        return record
+
+
+    dataset = load_dataset("nateraw/rice-image-dataset")['train']
+    dataset = dataset.shuffle(seed=42)
+    dataset = dataset.map(convert_image)
+    dataset.save_to_disk("datasets/rice.hf")
+
+dataset = load_from_disk("datasets/rice.hf")
+dataset = dataset.with_format("torch")
 print("Dataset information")
 print("-- Columns", dataset.column_names)
 print("-- Shape", dataset.shape)
 print("-- Label", dataset.features['label'])
 print("-- Image", dataset.features['image'])
 
-
-def transforms(record):
-    record['image'] = [T.ToTensor()(im) for im in record['image']]
-    return record
-
-
-dataset = dataset.shuffle(seed=42)
-dataset.set_transform(transforms)
 dataset = dataset.train_test_split(test_size=0.1)
 train_dataset = dataset['train']
 val_dataset = dataset['test']
@@ -44,12 +50,13 @@ print("-- image shape", image['image'].shape)
 # ========================================
 # Hyperparameters
 LR = 1e-3
-BATCH_SIZE = 2
+BATCH_SIZE = 64
 EPOCHS = 10
 INPUT_DIM = image['image'].shape  # (num_channels, height, width) = (3, 256, 256)
 NUM_CLASSES = len(train_dataset.features['label'].names)  # 5 = (Arborio, Basmati, Ipsala, Jasmini, Karacadag)
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"Running on device: {device}")
 
 # Initializing
 model = LeNet(
@@ -83,8 +90,8 @@ for epoch in range(0, EPOCHS):
     for batch in train_dataset.iter(batch_size=BATCH_SIZE):
         # Next batch of training samples
         # Convert batch list of tensor to a single tensor of size (batch_size, 3, 256, 256)
-        images = torch.stack(batch['image']).to(device)
-        labels = torch.tensor(batch['label']).to(device)
+        images = batch['image'].to(device)
+        labels = batch['label'].to(device)
 
         # Forward pass
         prediction = model(images)
@@ -99,15 +106,15 @@ for epoch in range(0, EPOCHS):
         total_train_loss += loss
         total_train_correct += (prediction.argmax(1) == labels).type(torch.float).sum().item()
         counter += 1
-        print(f"Batch {counter}/{len(train_dataset) // BATCH_SIZE}", end="\r")
+        print(f"EPOCH: {epoch + 1}/{EPOCHS} | BATCH {counter}/{len(train_dataset) // BATCH_SIZE}", end="\r")
 
     with torch.no_grad():
         # Set the model in evaluation
         model.eval()
 
         for batch in val_dataset.iter(batch_size=BATCH_SIZE):
-            images = torch.stack(batch['image']).to(device)
-            labels = torch.tensor(batch['label']).to(device)
+            images = batch['image'].to(device)
+            labels = batch['label'].to(device)
 
             # Forward pass
             prediction = model(images)
