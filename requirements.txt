@@ -4,3 +4,6 @@ datasets==2.19.1
 matplotlib==3.8.3
 torch==2.3.0
 torchvision==0.18.0
+tqdm==4.66.2
+pandas==2.2.1
+scipy==1.13.0
