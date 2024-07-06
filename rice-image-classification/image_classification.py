@@ -1,10 +1,13 @@
 import torch
 import torchvision.transforms as T
+
 from datasets import load_dataset
 from torch.utils.data import DataLoader
 
 from lenet import LeNet
 from vgg16 import VGG16
+
+model_name = "VGG16"
 
 
 def convert_image(entry):
@@ -49,46 +52,60 @@ if __name__ == '__main__':
     # ========================================
     # MODEL TRAINING
     # ========================================
-    # Hyperparameters
-    LR = 1e-3
-    BATCH_SIZE = 64
-    EPOCHS = 1
+
+    device = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
+    print(f"Running on device: {device}")
+
     INPUT_DIM = image['image'].shape  # (num_channels, height, width) = (3, 256, 256)
     NUM_CLASSES = len(train_dataset.features['label'].names)  # 5 = (Arborio, Basmati, Ipsala, Jasmini, Karacadag)
 
-    train_data_loader = DataLoader(dataset=train_dataset, batch_size=BATCH_SIZE, shuffle=True,
-                                   num_workers=6, prefetch_factor=8, pin_memory=True)
-    val_data_loader = DataLoader(dataset=val_dataset, batch_size=BATCH_SIZE, shuffle=True,
-                                 num_workers=6, prefetch_factor=8, pin_memory=True)
-    train_total_batches = len(train_dataset) // BATCH_SIZE
-    val_total_batches = len(val_dataset) // BATCH_SIZE
-
-    device = (
-        "cuda"
-        if torch.cuda.is_available()
-        else "mps"
-        if torch.backends.mps.is_available()
-        else "cpu"
-    )
-    print(f"Running on device: {device}")
-
-    # Initializing
-    model_name = "VGG16"
+    # Hyperparameters
     if model_name == "LeNet":
+        LR = 1e-3
+        BATCH_SIZE = 64
+        EPOCHS = 1
+
         model = LeNet(
             num_channels=INPUT_DIM[0],
             image_width=INPUT_DIM[1],
             image_height=INPUT_DIM[2],
             num_classes=NUM_CLASSES
         ).to(device)
+
+        optimizer = torch.optim.Adam(model.parameters(), lr=LR)
     else:
+
+        def init_function(m):
+            if isinstance(m, torch.nn.Conv2d):
+                torch.nn.init.kaiming_normal_(m.weight, mode="fan_out", nonlinearity="relu")
+                if m.bias is not None:
+                    torch.nn.init.constant_(m.bias, 0)
+            elif isinstance(m, torch.nn.Linear):
+                torch.nn.init.normal_(m.weight, 0, 0.01)
+                torch.nn.init.constant_(m.bias, 0)
+
+
+        # Hyperparameters
+        # Very Deep Convolutional Networks for Large-Scale Image Recognition
+        LR = 1e-2
+        EPOCHS = 1
+        L2 = 5e-4
+        MOMENTUM = 0.9
+        DROPOUT = 0.5
+        BATCH_SIZE = 64  # As per paper should be 256, but due to memory it's set to 64
+
         model = VGG16(
             num_channels=INPUT_DIM[0],
             image_length=INPUT_DIM[1],
-            num_classes=NUM_CLASSES
+            num_classes=NUM_CLASSES,
+            dropout=DROPOUT,
         ).to(device)
+        model.apply(init_function)
+
+        optimizer = torch.optim.SGD(model.parameters(), lr=LR, momentum=MOMENTUM, weight_decay=L2)
+
     criterion = torch.nn.NLLLoss()  # Negative Log Likelihood Loss
-    optimizer = torch.optim.Adam(model.parameters(), lr=LR)
+
     print("Number of parameters", sum(p.numel() for p in model.parameters() if p.requires_grad))
     history = {
         "train_loss": [],
@@ -96,6 +113,13 @@ if __name__ == '__main__':
         "val_loss": [],
         "val_acc": []
     }
+
+    train_data_loader = DataLoader(dataset=train_dataset, batch_size=BATCH_SIZE, shuffle=True,
+                                   num_workers=6, prefetch_factor=8, pin_memory=True)
+    val_data_loader = DataLoader(dataset=val_dataset, batch_size=BATCH_SIZE, shuffle=True,
+                                 num_workers=6, prefetch_factor=8, pin_memory=True)
+    train_total_batches = len(train_dataset) // BATCH_SIZE
+    val_total_batches = len(val_dataset) // BATCH_SIZE
 
     # Training
     for epoch in range(0, EPOCHS):
