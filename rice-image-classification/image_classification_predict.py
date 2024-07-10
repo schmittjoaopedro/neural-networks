@@ -49,8 +49,7 @@ if __name__ == '__main__':
         ).to(device)
 
     model.load_state_dict(torch.load(f"output/{model_name}_epoch_1.pth"))
-    model.eval()
-
+    
     print("Number of parameters", sum(p.numel() for p in model.parameters() if p.requires_grad))
     history = {
         "train_loss": [],
@@ -67,16 +66,19 @@ if __name__ == '__main__':
     total_val_correct = 0
     criterion = torch.nn.NLLLoss()
 
-    for batch in val_data_loader:
-        images = batch['image'].to(device)
-        labels = batch['label'].to(device)
+    with torch.no_grad():
+        model.eval()
 
-        # Forward pass
-        prediction = model(images)
-        total_val_loss += criterion(prediction, labels)
-        total_val_correct += (prediction.argmax(1) == labels).type(torch.float).sum().item()
-        counter += 1
-        print(f"BATCH: {counter}/{val_total_batches}")
+        for batch in val_data_loader:
+            images = batch['image'].to(device)
+            labels = batch['label'].to(device)
+
+            # Forward pass
+            prediction = model(images)
+            total_val_loss += criterion(prediction, labels)
+            total_val_correct += (prediction.argmax(1) == labels).type(torch.float).sum().item()
+            counter += 1
+            print(f"BATCH: {counter}/{val_total_batches}")
 
     average_val_loss = total_val_loss / len(val_dataset)
     average_val_acc = total_val_correct / len(val_dataset)
