@@ -1,3 +1,5 @@
+import os
+
 import torch
 import torchvision.transforms as T
 
@@ -58,12 +60,13 @@ if __name__ == '__main__':
 
     INPUT_DIM = image['image'].shape  # (num_channels, height, width) = (3, 256, 256)
     NUM_CLASSES = len(train_dataset.features['label'].names)  # 5 = (Arborio, Basmati, Ipsala, Jasmini, Karacadag)
+    START_EPOCH = 1
+    END_EPOCH = 2
 
     # Hyperparameters
     if model_name == "LeNet":
         LR = 1e-3
         BATCH_SIZE = 64
-        EPOCHS = 1
 
         model = LeNet(
             num_channels=INPUT_DIM[0],
@@ -88,7 +91,6 @@ if __name__ == '__main__':
         # Hyperparameters
         # Very Deep Convolutional Networks for Large-Scale Image Recognition
         LR = 1e-2
-        EPOCHS = 1
         L2 = 5e-4
         MOMENTUM = 0.9
         DROPOUT = 0.5
@@ -121,8 +123,13 @@ if __name__ == '__main__':
     train_total_batches = len(train_dataset) // BATCH_SIZE
     val_total_batches = len(val_dataset) // BATCH_SIZE
 
+    # Check if training weights exist
+    if os.path.exists(f"output/{model_name}_epoch_{START_EPOCH}.pth"):
+        print(f"Loading model weights from output/{model_name}_epoch_{START_EPOCH}.pth")
+        model.load_state_dict(torch.load(f"output/{model_name}_epoch_{START_EPOCH}.pth"))
+
     # Training
-    for epoch in range(0, EPOCHS):
+    for epoch in range(START_EPOCH, END_EPOCH):
         # Set the model in training mode
         model.train()
 
@@ -144,7 +151,7 @@ if __name__ == '__main__':
             batch_loss = criterion(prediction, labels)
             batch_acc = (prediction.argmax(1) == labels).type(torch.float).sum().item()
             counter += 1
-            print(f"EPOCH: {epoch + 1}/{EPOCHS} | "
+            print(f"EPOCH: {epoch + 1}/{END_EPOCH} | "
                   f"BATCH: {counter}/{train_total_batches} | "
                   f"BATCH LOSS: {batch_loss:.4f} | "
                   f"BATCH ACCURACY: {batch_acc / BATCH_SIZE:.4f}")
@@ -182,7 +189,7 @@ if __name__ == '__main__':
         history['train_acc'].append(average_train_acc)
         history['val_loss'].append(average_val_loss)
         history['val_acc'].append(average_val_acc)
-        print(f"EPOCH: {epoch + 1}/{EPOCHS} | "
+        print(f"EPOCH: {epoch + 1}/{END_EPOCH} | "
               f"TRAIN LOSS: {average_train_loss:.4f} | "
               f"TRAIN ACCURACY: {average_train_acc:.4f} | "
               f"VALIDATION LOSS: {average_val_loss:.4f} | "
