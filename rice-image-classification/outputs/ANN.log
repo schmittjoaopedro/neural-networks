@@ -1,0 +1,98 @@
+/Users/joaopedroschmitt/.pyenv/versions/3.12.0/bin/python /Users/joaopedroschmitt/projects/schmittjoaopedro/neural-networks/rice-image-classification/feature_classification.py
+Number of records after removing NaN values:  74992
+Running on device: mps
+Number of params:  11205
+Batch 0 | Loss: 1.6664 | Accuracy: 0.1719
+Batch 100 | Loss: 1.4475 | Accuracy: 0.7266
+Batch 200 | Loss: 1.2222 | Accuracy: 0.9062
+Batch 300 | Loss: 0.9896 | Accuracy: 0.9297
+Batch 400 | Loss: 0.8544 | Accuracy: 0.9609
+Batch 500 | Loss: 0.6533 | Accuracy: 0.9688
+Training Epoch 0 | Loss: 1.0954552640517552 | Accuracy: 0.8631689681740058
+Validation | Loss: 0.6320322842921241 | Accuracy: 0.9630666666666666
+--------------------------------------------------------------------------------
+Batch 0 | Loss: 0.6458 | Accuracy: 0.9531
+Batch 100 | Loss: 0.5120 | Accuracy: 0.9688
+Batch 200 | Loss: 0.4270 | Accuracy: 0.9844
+Batch 300 | Loss: 0.3441 | Accuracy: 0.9766
+Batch 400 | Loss: 0.3268 | Accuracy: 0.9688
+Batch 500 | Loss: 0.2762 | Accuracy: 0.9688
+Training Epoch 1 | Loss: 0.4000953146058953 | Accuracy: 0.9741599004326439
+Validation | Loss: 0.24784604750447353 | Accuracy: 0.9814666666666667
+--------------------------------------------------------------------------------
+Batch 0 | Loss: 0.2620 | Accuracy: 0.9766
+Batch 100 | Loss: 0.1776 | Accuracy: 0.9922
+Batch 200 | Loss: 0.1990 | Accuracy: 0.9688
+Batch 300 | Loss: 0.1738 | Accuracy: 0.9688
+Batch 400 | Loss: 0.1599 | Accuracy: 0.9766
+Batch 500 | Loss: 0.1169 | Accuracy: 0.9922
+Training Epoch 2 | Loss: 0.17843608525722768 | Accuracy: 0.9830794760860546
+Validation | Loss: 0.13242080832942058 | Accuracy: 0.9853333333333333
+--------------------------------------------------------------------------------
+Batch 0 | Loss: 0.1269 | Accuracy: 0.9844
+Batch 100 | Loss: 0.1104 | Accuracy: 1.0000
+Batch 200 | Loss: 0.0947 | Accuracy: 0.9922
+Batch 300 | Loss: 0.0835 | Accuracy: 1.0000
+Batch 400 | Loss: 0.0796 | Accuracy: 0.9922
+Batch 500 | Loss: 0.1017 | Accuracy: 0.9766
+Training Epoch 3 | Loss: 0.10538657626955572 | Accuracy: 0.9861909559651514
+Validation | Loss: 0.08653669974814027 | Accuracy: 0.9876
+--------------------------------------------------------------------------------
+Batch 0 | Loss: 0.0868 | Accuracy: 0.9922
+Batch 100 | Loss: 0.0739 | Accuracy: 0.9922
+Batch 200 | Loss: 0.0594 | Accuracy: 1.0000
+Batch 300 | Loss: 0.0721 | Accuracy: 0.9922
+Batch 400 | Loss: 0.0666 | Accuracy: 0.9922
+Batch 500 | Loss: 0.0707 | Accuracy: 0.9844
+Training Epoch 4 | Loss: 0.07301324790795193 | Accuracy: 0.9883393587388135
+Validation | Loss: 0.06350673823538473 | Accuracy: 0.9889333333333333
+--------------------------------------------------------------------------------
+Batch 0 | Loss: 0.0631 | Accuracy: 0.9766
+Batch 100 | Loss: 0.0475 | Accuracy: 1.0000
+Batch 200 | Loss: 0.0506 | Accuracy: 0.9922
+Batch 300 | Loss: 0.0574 | Accuracy: 0.9844
+Batch 400 | Loss: 0.1001 | Accuracy: 0.9688
+Batch 500 | Loss: 0.0736 | Accuracy: 0.9844
+Training Epoch 5 | Loss: 0.055094661438047435 | Accuracy: 0.989880282107509
+Validation | Loss: 0.049465713517393095 | Accuracy: 0.9905333333333334
+--------------------------------------------------------------------------------
+Batch 0 | Loss: 0.0415 | Accuracy: 1.0000
+Batch 100 | Loss: 0.0243 | Accuracy: 1.0000
+Batch 200 | Loss: 0.0588 | Accuracy: 0.9766
+Batch 300 | Loss: 0.0320 | Accuracy: 1.0000
+Batch 400 | Loss: 0.0470 | Accuracy: 0.9844
+Batch 500 | Loss: 0.0665 | Accuracy: 0.9844
+Training Epoch 6 | Loss: 0.04361344370144335 | Accuracy: 0.9916434540389972
+Validation | Loss: 0.03969088455630561 | Accuracy: 0.9926666666666667
+--------------------------------------------------------------------------------
+Batch 0 | Loss: 0.0344 | Accuracy: 1.0000
+Batch 100 | Loss: 0.0608 | Accuracy: 0.9844
+Batch 200 | Loss: 0.0245 | Accuracy: 1.0000
+Batch 300 | Loss: 0.0259 | Accuracy: 0.9922
+Batch 400 | Loss: 0.0244 | Accuracy: 1.0000
+Batch 500 | Loss: 0.0414 | Accuracy: 0.9844
+Training Epoch 7 | Loss: 0.035546582596108434 | Accuracy: 0.9928732294197831
+Validation | Loss: 0.03258949273534245 | Accuracy: 0.9932
+--------------------------------------------------------------------------------
+Batch 0 | Loss: 0.0456 | Accuracy: 0.9844
+Batch 100 | Loss: 0.0194 | Accuracy: 1.0000
+Batch 200 | Loss: 0.0181 | Accuracy: 1.0000
+Batch 300 | Loss: 0.0312 | Accuracy: 0.9922
+Batch 400 | Loss: 0.0187 | Accuracy: 0.9922
+Batch 500 | Loss: 0.0223 | Accuracy: 0.9922
+Training Epoch 8 | Loss: 0.02975042467005551 | Accuracy: 0.9938659396669235
+Validation | Loss: 0.027778772005842903 | Accuracy: 0.9945333333333334
+--------------------------------------------------------------------------------
+Batch 0 | Loss: 0.0105 | Accuracy: 1.0000
+Batch 100 | Loss: 0.0391 | Accuracy: 0.9844
+Batch 200 | Loss: 0.0412 | Accuracy: 0.9844
+Batch 300 | Loss: 0.0321 | Accuracy: 0.9922
+Batch 400 | Loss: 0.0191 | Accuracy: 1.0000
+Batch 500 | Loss: 0.0312 | Accuracy: 0.9922
+Training Epoch 9 | Loss: 0.025338776187378575 | Accuracy: 0.9949030996266224
+Validation | Loss: 0.023464355286273917 | Accuracy: 0.9956
+--------------------------------------------------------------------------------
+Training complete!
+Saving model...
+
+Process finished with exit code 0

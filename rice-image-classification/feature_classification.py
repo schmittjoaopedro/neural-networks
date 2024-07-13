@@ -50,7 +50,7 @@ train_dataset, test_dataset = random_split(rice_dataset, [split, len(pd_df) - sp
 # MODEL DEFINITION
 #############################
 learning_rate = 1e-4
-num_epochs = 2
+num_epochs = 10
 batch_size = 128
 
 device = "cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu"
