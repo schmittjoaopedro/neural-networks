@@ -7,7 +7,7 @@ import model
 
 # HYPERPARAMETERS
 input_size = 244
-learning_rate = 1e-3
+learning_rate = 1e-4
 num_epochs = 50
 batch_size = 32
 loss_class_weight = 0.4
@@ -252,13 +252,23 @@ with torch.no_grad():
         inference("val", image, output)
 
 """
-1-channel, MaxPool2d, DropoutAfterBackbone, loss_class_weight=0.4, lr=1e-3 (params 59,353,862)
+1-channel, AvgPool2d, loss_class_weight=0.4, lr=1e-3, epoch=50 (params 59,353,862)
 Train Loss: 0.004576 | Class Loss: 0.011260 | Box Loss: 0.000121 | Accuracy: 0.957406 | IoU: 0.643346
 Dev Loss: 0.007606 | Class Loss: 0.016572 | Box Loss: 0.001628 | Accuracy: 0.852713 | IoU: 0.447719
 Val Loss: 0.018220 | Class Loss: 0.017749 | Box Loss: 0.000472 | Accuracy: 0.800000 | IoU: 0.440699
 
-3-channel, MaxPool2d, DropoutAfterBackbone, loss_class_weight=0.4, lr=1e-3 (params 59,355,014)
+3-channel, AvgPool2d, loss_class_weight=0.4, lr=1e-3, epoch=50 (params 59,355,014)
 Train Loss: 0.004147 | Class Loss: 0.010341 | Box Loss: 0.000019 | Accuracy: 0.989351 | IoU: 0.826650
 Dev Loss: 0.005874 | Class Loss: 0.013981 | Box Loss: 0.000470 | Accuracy: 0.945736 | IoU: 0.630955
 Val Loss: 0.014980 | Class Loss: 0.014775 | Box Loss: 0.000206 | Accuracy: 0.900000 | IoU: 0.629788
+
+3-channel, AvgPool2d, loss_class_weight=0.2, lr=1e-3, epoch=50 (params 59,355,014)
+Train Loss: 0.002131 | Class Loss: 0.010525 | Box Loss: 0.000033 | Accuracy: 0.983543 | IoU: 0.788433
+Dev Loss: 0.003200 | Class Loss: 0.014500 | Box Loss: 0.000375 | Accuracy: 0.930233 | IoU: 0.597626
+Val Loss: 0.013938 | Class Loss: 0.013719 | Box Loss: 0.000218 | Accuracy: 0.938462 | IoU: 0.591371
+
+3-channel, AvgPool2d, loss_class_weight=0.4, lr=1e-4, epoch=50 (params 59,355,014)
+Train Loss: 0.004156 | Class Loss: 0.010373 | Box Loss: 0.000011 | Accuracy: 0.988383 | IoU: 0.870508
+Dev Loss: 0.005952 | Class Loss: 0.014183 | Box Loss: 0.000464 | Accuracy: 0.930233 | IoU: 0.635148
+Val Loss: 0.014808 | Class Loss: 0.014585 | Box Loss: 0.000224 | Accuracy: 0.923077 | IoU: 0.621722
 """
