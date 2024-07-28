@@ -37,9 +37,12 @@ def list_files(dataset_dir, image_ext='.jpg', split_percentage=(70, 20), shuffle
     return files[0:split_training], files[split_training:split_validation], files[split_validation:]
 
 
-def plot_image(image, clazz, box, box_original=None, iou=None, split=None):
+def plot_image(image, clazz, box, box_original=None, iou=None, split=None, channels=1):
     if isinstance(image, torch.Tensor):
-        image = image.numpy()
+        if channels == 1:
+            image = image.numpy()
+        else:
+            image = image.numpy()
     if isinstance(clazz, torch.Tensor):
         clazz = clazz.item()
     if isinstance(box, torch.Tensor):
@@ -47,7 +50,10 @@ def plot_image(image, clazz, box, box_original=None, iou=None, split=None):
     if box_original is not None and isinstance(box_original, torch.Tensor):
         box_original = box_original.numpy()
     img_title = "Mask" if clazz == 0 else "No mask"
-    rgb_image = cv.cvtColor(image, cv.COLOR_GRAY2RGB)
+    if channels == 1:
+        rgb_image = cv.cvtColor(image, cv.COLOR_GRAY2RGB)
+    else:
+        rgb_image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
     # Clazz = 0 -> with mask (red), Clazz = 1 -> without mask (green)
     cv.rectangle(rgb_image, box, (255 * (1 - clazz), 255 * clazz, 0), 2)
     if box_original is not None:
@@ -62,20 +68,24 @@ def plot_image(image, clazz, box, box_original=None, iou=None, split=None):
     plt.show()
 
 
-class PeopleMaskImageLoader(Dataset):
+class PeopleMaskDataset(Dataset):
 
-    def __init__(self, dataset_dir, image_files, transform=None, input_size=244):
+    def __init__(self, dataset_dir, image_files, transform=None, input_size=244, channels=3):
         self.dataset_dir = dataset_dir
         self.image_files = image_files
         self.input_size = input_size
         self.transform = transform
+        self.channels = channels
 
     def __len__(self):
         return len(self.image_files)
 
     def __getitem__(self, idx):
         image_file = self.image_files[idx]
-        image = cv.imread(f"{self.dataset_dir}/{image_file}.jpg", cv.IMREAD_GRAYSCALE)
+        if self.channels == 1:
+            image = cv.imread(f"{self.dataset_dir}/{image_file}.jpg", cv.IMREAD_GRAYSCALE)
+        else:
+            image = cv.imread(f"{self.dataset_dir}/{image_file}.jpg")
 
         with open(f"{self.dataset_dir}/{image_file}.txt", 'r') as annot:
             line = annot.readlines()[0]
@@ -91,15 +101,23 @@ class PeopleMaskImageLoader(Dataset):
         return new_image, output
 
     def _escale_image_and_box(self, image, box):
-        height, width = image.shape
+        if self.channels == 1:
+            height, width = image.shape
+            channels = 1
+        else:
+            height, width, channels = image.shape
         max_size = max(height, width)
         r = max_size / self.input_size
         new_width = int(width / r)
         new_height = int(height / r)
         new_size = (new_width, new_height)
         resized = cv.resize(image, new_size, interpolation=cv.INTER_LINEAR)
-        new_image = torch.zeros((self.input_size, self.input_size), dtype=torch.uint8)
-        new_image[0:new_height, 0:new_width] = torch.tensor(resized)
+        if self.channels == 1:
+            new_image = torch.zeros((self.input_size, self.input_size), dtype=torch.uint8)
+            new_image[0:new_height, 0:new_width] = torch.tensor(resized)
+        else:
+            new_image = torch.zeros((self.input_size, self.input_size, channels), dtype=torch.uint8)
+            new_image[0:new_height, 0:new_width, :] = torch.tensor(resized)
 
         x, y, w, h = box[0], box[1], box[2], box[3]
         new_box = [int((x - 0.5 * w) * width / r), int((y - 0.5 * h) * height / r), int(w * width / r),
