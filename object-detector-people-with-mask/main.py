@@ -1,3 +1,5 @@
+import time
+
 import torch
 from torch.utils.data import DataLoader
 
@@ -8,9 +10,9 @@ import model
 # HYPERPARAMETERS
 input_size = 244
 learning_rate = 1e-4
-num_epochs = 50
+num_epochs = 200
 batch_size = 32
-loss_class_weight = 0.4
+loss_class_weight = 0.2
 channels = 3
 
 # Load datasets
@@ -239,17 +241,23 @@ def inference(split, image, output):
 
 
 with torch.no_grad():
-    for i in torch.randint(0, len(train_dataset), (10,)):
+    for i in torch.randint(0, len(train_dataset), (20,)):
         image, output = train_dataset[i]
         inference("train", image, output)
+        time.sleep(1)
 
-    for i in torch.randint(0, len(dev_dataset), (10,)):
+    for i in torch.randint(0, len(dev_dataset), (20,)):
         image, output = dev_dataset[i]
         inference("dev", image, output)
+        time.sleep(1)
 
-    for i in torch.randint(0, len(val_dataset), (10,)):
+    for i in torch.randint(0, len(val_dataset), (20,)):
         image, output = val_dataset[i]
         inference("val", image, output)
+        time.sleep(1)
+
+# Save model
+# torch.save(model.state_dict(), "model.pth")
 
 """
 1-channel, AvgPool2d, loss_class_weight=0.4, lr=1e-3, epoch=50 (params 59,353,862)
@@ -271,4 +279,14 @@ Val Loss: 0.013938 | Class Loss: 0.013719 | Box Loss: 0.000218 | Accuracy: 0.938
 Train Loss: 0.004156 | Class Loss: 0.010373 | Box Loss: 0.000011 | Accuracy: 0.988383 | IoU: 0.870508
 Dev Loss: 0.005952 | Class Loss: 0.014183 | Box Loss: 0.000464 | Accuracy: 0.930233 | IoU: 0.635148
 Val Loss: 0.014808 | Class Loss: 0.014585 | Box Loss: 0.000224 | Accuracy: 0.923077 | IoU: 0.621722
+
+3-channel, AvgPool2d, loss_class_weight=0.4, lr=1e-4, epoch=100 (params 59,355,014)
+Train Loss: 0.004217 | Class Loss: 0.010523 | Box Loss: 0.000013 | Accuracy: 0.983543 | IoU: 0.881788
+Dev Loss: 0.006216 | Class Loss: 0.014548 | Box Loss: 0.000662 | Accuracy: 0.922481 | IoU: 0.629879
+Val Loss: 0.015323 | Class Loss: 0.015095 | Box Loss: 0.000228 | Accuracy: 0.900000 | IoU: 0.621359
+
+3-channel, AvgPool2d, loss_class_weight=0.2, lr=1e-4, epoch=200 (params 59,355,014)
+Train Loss: 0.002041 | Class Loss: 0.010191 | Box Loss: 0.000004 | Accuracy: 0.994192 | IoU: 0.921433
+Dev Loss: 0.003265 | Class Loss: 0.014247 | Box Loss: 0.000520 | Accuracy: 0.930233 | IoU: 0.654405
+Val Loss: 0.014695 | Class Loss: 0.014493 | Box Loss: 0.000202 | Accuracy: 0.923077 | IoU: 0.644181
 """
