@@ -2,3 +2,5 @@ dataset
 .idea
 output
 datasets
+celeba
+MNIST
